@@ -16,6 +16,7 @@ contract MyEpicNFT is ERC721URIStorage {
     string[] firstWords = ["Ally", "Bob", "Cam", "Davi", "Ellen", "Frank"];
     string[] secondWords = ["Apple", "Berry", "Candy", "Dog", "Ep", "Fow"];
     string[] thirdWords = ["China", "Germany", "Japan", "US", "UK", "Korea"];
+    event NewEpicNFTMinted(address sender, uint256 tokenId);
 
     constructor() ERC721("SquareNFT", "SQUARE") {
         console.log("This is my NFT contract. Woah!");
@@ -43,7 +44,12 @@ contract MyEpicNFT is ERC721URIStorage {
         return uint256(keccak256(abi.encodePacked(input)));
     }
 
+    function getTotalNFTMintedSoFar() internal view returns (uint256) {
+        return _tokenIds.current();
+    }
+
     function makeAnEpicNFT() public {
+        require(getTotalNFTMintedSoFar() <= 50);
         uint256 newItemId = _tokenIds.current();
 
         string memory first = pickRandomFirstWord(newItemId);
@@ -81,6 +87,7 @@ contract MyEpicNFT is ERC721URIStorage {
         console.log("An NFT w/ ID %s has been minted to %s", newItemId, msg.sender);
 
         _tokenIds.increment();
+        emit NewEpicNFTMinted(msg.sender, newItemId);
     }
     //https://jsonkeeper.com/b/
     
